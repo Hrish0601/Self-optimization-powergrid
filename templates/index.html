@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Self-Optimizing Power Grid</title>
+
+  <!-- Link to CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #002b5c, #007bff);
+      color: white;
+      text-align: center;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.4);
+      padding: 40px;
+      border-radius: 15px;
+      display: inline-block;
+    }
+
+    h1, h2 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #ddd;
+    }
+
+    button {
+      background-color: #ffcc00;
+      color: #002b5c;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ffd633;
+      transform: scale(1.05);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      color: #ccc;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>⚡ Self-Optimizing Power Grid</h2>
+    <p>AI for Real-Time Energy Fraud Detection & Load Balancing</p>
+    <a href="{{ templates\login.html }}"><button>Login</button></a>
+    <a href="{{ templates\signup.html }}"><button>Signup</button></a>
+  </div>
+
+  <footer style="margin-top: auto; padding: 20px; color: #ccc; font-size: 14px;">
+    <p>Powered by AI | Mumbai Smart Energy Initiative © 2025</p>
+  </footer>
+</body>
+</html>

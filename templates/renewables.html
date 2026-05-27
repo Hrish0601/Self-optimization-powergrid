@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Renewable Energy Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {margin:0; font-family:'Segoe UI'; background:#0f2027; color:#ddd;}
+.header {background:#007bff;padding:20px;text-align:center;color:#fff;}
+.container {max-width:1100px;margin:20px auto;padding:20px;}
+
+.cards {display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:30px;}
+.card {
+  background:rgba(255,255,255,0.1);
+  padding:20px;
+  border-radius:12px;
+  flex:1;
+  min-width:200px;
+  text-align:center;
+}
+
+.card h3 {margin:0 0 10px;}
+.big {font-size:2.2rem;font-weight:bold;}
+
+.green {color:#2ed573;}
+.red {color:#ff4757;}
+.yellow {color:#ffa502;}
+
+.insight-box {
+  background:rgba(0,0,0,0.3);
+  padding:20px;
+  border-radius:10px;
+  margin-top:20px;
+}
+
+canvas {height:350px !important;}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>🌱 Renewable Energy Dashboard</h1>
+  <p>Smart insights into Mumbai's power sustainability</p>
+</div>
+
+<div class="container">
+
+<!-- CARDS -->
+<div class="cards">
+
+  <div class="card">
+    <h3>City Average</h3>
+    <div class="big green">{{ global_avg }}%</div>
+  </div>
+
+  <div class="card">
+    <h3>Best Zone</h3>
+    <div class="big green" id="bestZone"></div>
+  </div>
+
+  <div class="card">
+    <h3>Lowest Zone</h3>
+    <div class="big red" id="worstZone"></div>
+  </div>
+
+</div>
+
+<!-- CHART -->
+<canvas id="renewablesChart"></canvas>
+
+<!-- INSIGHT -->
+<div class="insight-box" id="insightText"></div>
+
+</div>
+
+<script>
+const labels = {{ zone_labels|tojson }};
+const values = {{ zone_values|tojson }};
+
+// =========================
+// FIND BEST & WORST
+// =========================
+const maxIndex = values.indexOf(Math.max(...values));
+const minIndex = values.indexOf(Math.min(...values));
+
+document.getElementById("bestZone").innerHTML =
+  `${labels[maxIndex]} (${values[maxIndex]}%)`;
+
+document.getElementById("worstZone").innerHTML =
+  `${labels[minIndex]} (${values[minIndex]}%)`;
+
+// =========================
+// GENERATE INSIGHT
+// =========================
+let avg = {{ global_avg }};
+let insight = "";
+
+if (avg > 30) {
+  insight = "🌍 Excellent renewable adoption. Mumbai grid is moving toward sustainability.";
+} else if (avg > 20) {
+  insight = "⚡ Moderate renewable usage. There is room for improvement.";
+} else {
+  insight = "🚨 Low renewable contribution. Grid heavily depends on non-renewable sources.";
+}
+
+document.getElementById("insightText").innerHTML = `
+  <h3>📊 System Insight</h3>
+  <p>${insight}</p>
+  <p><b>Recommendation:</b> Increase solar and wind integration in low-performing zones.</p>
+`;
+
+// =========================
+// CHART
+// =========================
+const ctx = document.getElementById('renewablesChart');
+
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: 'Renewable %',
+      data: values,
+      backgroundColor: values.map(v =>
+        v > 30 ? '#2ed573' :
+        v > 20 ? '#ffa502' :
+                 '#ff4757'
+      )
+    }]
+  },
+  options: {
+    plugins: {
+      legend: {display: false}
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>

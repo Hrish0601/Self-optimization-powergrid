@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Check My Bill – Mumbai Smart Energy</title>
+
+  <style>
+    body {
+      background: #0f2027;
+      color: #ddd;
+      font-family: 'Segoe UI';
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: rgba(255,255,255,0.1);
+      padding: 40px;
+      border-radius: 15px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px;
+      margin: 12px 0;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      font-size: 1.2rem;
+      background: #00ffcc;
+      color: #0f2027;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>🔍 Is My Electricity Bill Fair?</h2>
+  <p>Takes 30 seconds • No technical knowledge needed</p>
+
+  <form id="fraudForm">
+
+    <label>1. Last month's bill amount (₹)</label>
+    <input type="number" id="bill_amount" placeholder="e.g. 1850" required>
+
+    <label>2. Number of people living in your house</label>
+    <input type="number" id="occupants" value="4" required>
+
+    <label>3. Do you run AC / Geyser daily?</label>
+    <select id="ac_usage">
+      <option value="high">Yes, a lot (AC + Geyser)</option>
+      <option value="medium" selected>Sometimes</option>
+      <option value="low">Rarely / Never</option>
+    </select>
+
+    <label>4. Did you notice any sudden high bill this month?</label>
+    <select id="spike">
+      <option value="1">Yes, bill jumped suddenly</option>
+      <option value="0" selected>No, normal</option>
+    </select>
+
+    <button type="submit">Check for Fraud →</button>
+  </form>
+
+  <div id="result"></div>
+</div>
+
+<script>
+document.getElementById('fraudForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  // =========================
+  // INPUT VALUES
+  // =========================
+  const bill = parseFloat(document.getElementById('bill_amount').value);
+  const occupants = parseFloat(document.getElementById('occupants').value);
+  const usage = document.getElementById('ac_usage').value;
+  const spike = parseInt(document.getElementById('spike').value);
+
+  // =========================
+  // SMART FEATURE ENGINEERING
+  // =========================
+  const billPerPerson = bill / occupants;
+
+  let current = 5 + occupants * 1.2;
+  let power = 1.5 + occupants * 0.3;
+
+  if (usage === "high") {
+    current += 6;
+    power += 2.5;
+  } else if (usage === "medium") {
+    current += 3;
+    power += 1.2;
+  }
+
+  // =========================
+  // DATA SENT TO BACKEND
+  // =========================
+  const data = {
+    voltage_v: 220,
+    current_a: current,
+    active_power_kw: power,
+    reactive_power_kvar: 0.6,
+    load_demand_kwh: bill / 12,
+    deviation_neighborhood_ratio: occupants > 6 ? 1.7 : 1.1,
+    load_spike_flag: spike
+  };
+
+  // =========================
+  // API CALL
+  // =========================
+  const res = await fetch('/fraud-detection', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+
+  const json = await res.json();
+  const fraudProb = json.fraud_prob;
+
+  const div = document.getElementById('result');
+
+  // =========================
+  // FINAL DECISION LOGIC
+  // =========================
+
+  if (billPerPerson > 2000) {
+
+    div.innerHTML = `
+      <h3 style="color:#ff4757">🚨 High Per-Person Usage Detected</h3>
+      <p>Your electricity usage per person is unusually high.</p>
+      <p><b>Per Person Bill:</b> ₹${billPerPerson.toFixed(0)}</p>
+      <p><b>Recommendation:</b> Check appliances or meter</p>
+      <p><b>AI Probability:</b> ${fraudProb}</p>
+    `;
+    div.style.background = "rgba(255,71,87,0.25)";
+
+  } else if (fraudProb > 0.65) {
+
+    div.innerHTML = `
+      <h3 style="color:#ff4757">⚠️ Possible Fraud Detected</h3>
+      <p>Your usage pattern is suspicious.</p>
+      <p><b>Per Person Bill:</b> ₹${billPerPerson.toFixed(0)}</p>
+      <p><b>AI Probability:</b> ${fraudProb}</p>
+    `;
+    div.style.background = "rgba(255,71,87,0.2)";
+
+  } else if (fraudProb > 0.45) {
+
+    div.innerHTML = `
+      <h3 style="color:#ffa502">⚠️ Slightly Unusual Usage</h3>
+      <p>Your usage is above average but not alarming.</p>
+      <p><b>Per Person Bill:</b> ₹${billPerPerson.toFixed(0)}</p>
+      <p><b>AI Probability:</b> ${fraudProb}</p>
+    `;
+    div.style.background = "rgba(255,165,2,0.2)";
+
+  } else {
+
+    div.innerHTML = `
+      <h3 style="color:#2ed573">✅ Normal Usage</h3>
+      <p>Your electricity usage looks normal.</p>
+      <p><b>Per Person Bill:</b> ₹${billPerPerson.toFixed(0)}</p>
+
+    `;
+    div.style.background = "rgba(46,213,115,0.2)";
+  }
+
+  div.style.display = 'block';
+});
+</script>
+
+</body>
+</html>
+fraud_detection.html
+Displaying fraud_detection.html.

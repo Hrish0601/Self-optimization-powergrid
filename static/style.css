@@ -1,0 +1,178 @@
+/* =============================================
+   Mumbai Smart Energy - Updated style.css
+   Modern | Clean | Professional | Responsive
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #e0f2f1;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ===================== NAVBAR ===================== */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 50px;
+    background: rgba(15, 32, 39, 0.95);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+}
+
+.navbar h1 {
+    font-size: 26px;
+    color: #00ffcc;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.navbar a {
+    color: #ddd;
+    text-decoration: none;
+    margin-left: 28px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.navbar a:hover {
+    color: #00ffcc;
+    transform: translateY(-2px);
+}
+
+/* ===================== HERO SECTION ===================== */
+.hero {
+    background: linear-gradient(rgba(15,32,39,0.85), rgba(15,32,39,0.9)),
+                url('../static/mumbai_skyline.jfif') center/cover no-repeat;
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    background: linear-gradient(transparent, #0f2027);
+}
+
+/* ===================== CARDS ===================== */
+.card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(0, 255, 204, 0.15);
+    border-radius: 16px;
+    padding: 28px 20px;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(8px);
+}
+
+.card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 35px rgba(0, 255, 204, 0.15);
+    border-color: #00ffcc;
+}
+
+/* Professional Cards */
+.pro-card {
+    background: linear-gradient(135deg, #1a2a3a, #0f2027);
+    border-left: 5px solid #00ffcc;
+}
+
+/* ===================== BUTTONS ===================== */
+.btn {
+    border-radius: 50px;
+    font-weight: 600;
+    padding: 14px 32px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 15px;
+}
+
+.btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 255, 204, 0.3);
+}
+
+.btn-success { background: #00ffcc; color: #0f2027; }
+.btn-success:hover { background: #1abc9c; color: white; }
+
+.btn-warning { background: #f39c12; color: white; }
+.btn-warning:hover { background: #e67e22; }
+
+.btn-danger { background: #e74c3c; color: white; }
+
+/* ===================== FORMS ===================== */
+.form-control {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(0,255,204,0.3);
+    color: white;
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.form-control:focus {
+    border-color: #00ffcc;
+    box-shadow: 0 0 0 3px rgba(0,255,204,0.2);
+    outline: none;
+}
+
+/* ===================== UTILITY ===================== */
+.text-info { color: #00ffcc !important; }
+.text-success { color: #2ed573 !important; }
+.text-danger { color: #ff4757 !important; }
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .navbar a {
+        margin: 0 15px;
+    }
+    
+    .hero {
+        min-height: 60vh;
+    }
+    
+    .card {
+        margin-bottom: 20px;
+    }
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 30px;
+    color: #888;
+    font-size: 14px;
+    margin-top: 80px;
+}

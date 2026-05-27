@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fraud Detection - Mumbai Smart Energy</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .hero {
+      background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+                  url('{{ url_for("static", filename="mumbai_skyline.jfif") }}') center/cover no-repeat;
+      min-height: 40vh;
+      color: white;
+      display: flex;
+      align-items: center;
+    }
+
+    .main-card {
+      background: linear-gradient(135deg, #1a2a3a, #0f2027);
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .main-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .form-control, .form-select {
+      background-color: #2a3a4a;
+      border: 1px solid #4a5a6a;
+      color: white;
+      border-radius: 10px;
+      padding: 12px 15px;
+    }
+
+    .form-control:focus, .form-select:focus {
+      background-color: #2a3a4a;
+      border-color: #00c6ff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 198, 255, 0.25);
+      color: white;
+    }
+
+    .form-label {
+      color: #a0c4ff;
+      font-weight: 500;
+    }
+
+    .btn-detect {
+      background: linear-gradient(90deg, #0078d7, #00c6ff);
+      border: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      padding: 14px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-detect:hover {
+      transform: scale(1.06);
+      box-shadow: 0 10px 25px rgba(0, 198, 255, 0.5);
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      min-height: 60px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR (Same as Home) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-3" href="/">⚡ AI for Load Balancing and Fraud Detection</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        {% if session.username %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              👤 {{ session.username }}
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/logout">Logout</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO SECTION (Smaller than home) -->
+<div class="hero">
+  <div class="container text-center">
+    <h1 class="display-4 fw-bold mb-3">🔍 Smart Grid Fraud Detection</h1>
+    <p class="lead fs-5">AI-powered anomaly detection using Vertex AI</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-6">
+      
+      <div class="main-card p-5 text-white">
+        <div class="text-center mb-4">
+          <h2 class="mb-2">Fraud Detection System</h2>
+          <p class="text-light">Enter your meter parameters below</p>
+        </div>
+
+        <form id="fraudForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Voltage (V)</label>
+              <input name="voltage_v" type="number" step="0.01" class="form-control" placeholder="e.g. 230.5" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Current (A)</label>
+              <input name="current_a" type="number" step="0.01" class="form-control" placeholder="e.g. 12.4" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Active Power (kW)</label>
+              <input name="active_power_kw" type="number" step="0.01" class="form-control" placeholder="e.g. 2.85" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Reactive Power (kVAR)</label>
+              <input name="reactive_power_kvar" type="number" step="0.01" class="form-control" placeholder="e.g. 0.65" required>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Load Demand (kWh)</label>
+              <input name="load_demand_kwh" type="number" step="0.01" class="form-control" placeholder="e.g. 45.2" required>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Deviation from Neighborhood Ratio</label>
+              <input name="deviation_neighborhood_ratio" type="number" step="0.01" class="form-control" placeholder="e.g. 1.25" required>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Load Spike Detected?</label>
+              <select name="load_spike_flag" class="form-select">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-detect w-100 mt-4 text-white">
+            ⚡ Detect Fraud
+          </button>
+        </form>
+
+        <div id="result" class="result text-center"></div>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="/" class="back-home-link text-decoration-none">← Back to Home</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.querySelectorAll('.form-control, .form-select').forEach(el => {
+    el.addEventListener('focus', () => {
+      el.style.borderColor = '#00c6ff';
+    });
+  });
+
+const form = document.getElementById('fraudForm');
+const resultDiv = document.getElementById('result');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const data = Object.fromEntries(new FormData(form).entries());
+  Object.keys(data).forEach(k => {
+    if (!isNaN(data[k]) && data[k] !== "") data[k] = Number(data[k]);
+  });
+
+  resultDiv.innerHTML = "Analyzing...";
+
+  const response = await fetch('/fraud-detection', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+
+  const res = await response.json();
+
+  const isFraud = res.label === "Fraud Detected";
+
+  resultDiv.innerHTML = `
+    <strong>${isFraud ? '⚠️ FRAUDULENT' : '✅ Normal Usage'}</strong><br>
+    Probability: ${res.fraud_prob}<br>
+    Confidence: ${res.confidence}<br><br>
+    <b>Reason:</b>
+    <ul>${res.explanation.map(r=>`<li>${r}</li>`).join('')}</ul>
+  `;
+});
+
+  resultDiv.innerHTML = `
+  <strong>Result:</strong> 
+  <span style="color: ${isFraud ? '#ff4444' : '#00ff88'};">
+    ${isFraud ? '⚠️ FRAUD DETECTED' : '✅ Normal Usage'}
+  </span>
+  <br>
+  <small>Fraud Probability: ${res.fraud_prob}</small><br>
+  <small>Confidence: ${res.confidence}</small>
+`;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Alerts - Mumbai Smart Grid</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body {
+            margin: 0; font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0f2027, #1a3c5a);
+            color: #fff; min-height: 100vh;
+        }
+        .header {
+            background: rgba(0, 123, 255, 0.9); padding: 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .stats { display: flex; justify-content: space-around; margin: 20px 0; font-size: 18px; }
+        .stat { text-align: center; }
+        .stat.high { color: #ff4757; } .stat.medium { color: #ffa502; } .stat.low { color: #2ed573; }
+        .controls { display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+        .controls button {
+            padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;
+        }
+        .controls button:hover { background: #0056b3; }
+        .controls button.active { background: #28a745; }
+        #alerts-container { max-width: 800px; margin: 0 auto; }
+        .alert-card {
+            background: rgba(255,255,255,0.1); margin: 10px; padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);
+            border-left: 4px solid; animation: fadeIn 0.5s; display: flex; justify-content: space-between; align-items: center;
+        }
+        .alert-card.high { border-left-color: #ff4757; }
+        .alert-card.medium { border-left-color: #ffa502; }
+        .alert-card.low { border-left-color: #2ed573; }
+        .alert-info { flex-grow: 1; }
+        .alert-zone { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+        .alert-details { font-size: 14px; opacity: 0.8; }
+        .risk-badge { padding: 4px 8px; border-radius: 15px; font-size: 12px; font-weight: bold; }
+        .risk-badge.high { background: #ff4757; color: white; }
+        .risk-badge.medium { background: #ffa502; color: white; }
+        .risk-badge.low { background: #2ed573; color: white; }
+        .map-container { height: 300px; margin: 20px auto; max-width: 800px; border-radius: 10px; overflow: hidden; }
+        #mini-map { height: 100%; width: 100%; }
+        .toggle-auto { position: fixed; top: 20px; right: 20px; padding: 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .toggle-auto:hover { background: #218838; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 600px) { .stats, .controls { flex-direction: column; } .alert-card { flex-direction: column; text-align: center; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔔 Live Alerts Dashboard</h1>
+        <p>Real-time power grid risks across Mumbai zones</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat high">High: {{ alerts | selectattr('label', 'equalto', 'High') | list | length }}</div>
+        <div class="stat medium">Medium: {{ alerts | selectattr('label', 'equalto', 'Medium') | list | length }}</div>
+        <div class="stat low">Low: {{ alerts | selectattr('label', 'equalto', 'Low') | list | length }}</div>
+        <div>Total: {{ alerts | length }}</div>
+    </div>
+
+    <div class="controls">
+        <button onclick="filterAlerts('all')" class="active">All</button>
+        <button onclick="filterAlerts('high')">High</button>
+        <button onclick="filterAlerts('medium')">Medium</button>
+        <button onclick="filterAlerts('low')">Low</button>
+        <button onclick="sortAlerts('time')">Sort by Time</button>
+        <button onclick="exportAlerts()">Export CSV</button>
+        <button id="toggle-auto" class="toggle-auto" onclick="toggleAutoRefresh()">Auto-Refresh: ON</button>
+    </div>
+
+    <div id="alerts-container">
+        {% for alert in alerts %}
+        <div class="alert-card {{ alert.label | lower }}" data-risk="{{ alert.label | lower }}">
+            <div class="alert-info">
+                <div class="alert-zone">{{ alert.zone }}</div>
+                <div class="alert-details">
+                    Risk: <span class="risk-badge {{ alert.label | lower }}">{{ alert.label }}</span> ({{ alert.risk }})
+                    | Load: {{ alert.load_kwh }} kWh | Renewables: {{ alert.renewable_pct }}%
+                    {% if alert.overload %}<span style="color: #ff4757;">⚠️ Overload</span>{% endif %}
+                    | {{ alert.time }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="map-container">
+        <div id="mini-map"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Mini-map setup
+        const miniMap = L.map('mini-map').setView([19.0760, 72.8777], 11);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMap);
+
+        // Add alert markers
+        const alertsData = {{ alerts | tojson }};
+        const riskColors = {low: '#2ed573', medium: '#ffa502', high: '#ff4757'};
+        alertsData.forEach(alert => {
+            L.circleMarker([getZoneCoords(alert.zone)], {
+                color: riskColors[alert.label.toLowerCase()],
+                fillOpacity: 0.7,
+                radius: 8
+            }).bindPopup(`
+                <b>${alert.zone}</b><br>
+                Risk: ${alert.label} (${alert.risk})<br>
+                Time: ${alert.time}<br>
+                Load: ${alert.load_kwh} kWh
+            `).addTo(miniMap);
+        });
+
+        function getZoneCoords(zone) {
+            const coords = {
+                'BEST Central': [19.0760, 72.8777],
+                'Adani West': [19.1132, 72.8369],
+                'Tata South': [19.0618, 72.8350],
+                'MSEDCL Suburbs': [19.2183, 72.9781]
+            };
+            return coords[zone] || [19.0760, 72.8777];
+        }
+
+        // Filter alerts
+        let currentFilter = 'all';
+        function filterAlerts(type) {
+            document.querySelectorAll('.controls button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            currentFilter = type;
+            document.querySelectorAll('.alert-card').forEach(card => {
+                card.style.display = (type === 'all' || card.dataset.risk === type) ? 'flex' : 'none';
+            });
+        }
+
+        // Sort alerts (simple client-side)
+        function sortAlerts(by) {
+            const container = document.getElementById('alerts-container');
+            const cards = Array.from(container.children);
+            cards.sort((a, b) => {
+                if (by === 'time') {
+                    return new Date(b.querySelector('.alert-details').textContent.match(/(\d{2}:\d{2})/)[1]) - new Date(a.querySelector('.alert-details').textContent.match(/(\d{2}:\d{2})/)[1]);
+                }
+                // Add more sorts as needed
+                return 0;
+            });
+            cards.forEach(card => container.appendChild(card));
+        }
+
+        // Export CSV
+        function exportAlerts() {
+            let csv = 'Zone,Risk,Label,Load kWh,Renewables %,Time\n';
+            alertsData.forEach(alert => {
+                csv += `${alert.zone},${alert.risk},${alert.label},${alert.load_kwh},${alert.renewable_pct},${alert.time}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'mumbai-alerts.csv'; a.click();
+        }
+
+        // Auto-refresh
+        let autoRefresh = true;
+        function toggleAutoRefresh() {
+            autoRefresh = !autoRefresh;
+            document.getElementById('toggle-auto').textContent = `Auto-Refresh: ${autoRefresh ? 'ON' : 'OFF'}`;
+            if (autoRefresh) setInterval(() => location.reload(), 30000);
+            else clearInterval();
+        }
+        toggleAutoRefresh();  // Start enabled
+
+        // Notification permission
+        if (Notification.permission === 'default') Notification.requestPermission();
+        setInterval(() => {
+            if (autoRefresh && Math.random() > 0.8) {  // Simulate new high alert
+                new Notification('High Risk Alert!', { body: 'Check MSEDCL Suburbs now!' });
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

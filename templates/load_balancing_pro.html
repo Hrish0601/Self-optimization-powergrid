@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Load Balancing</title>
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  background: #0b141a;
+  color: #e6edf3;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.hero {
+  text-align: center;
+  padding: 40px 20px;
+  border-bottom: 1px solid #1f2a33;
+}
+
+.hero p { color: #8b9aa7; }
+
+.card-custom {
+  background: #121c24;
+  border-radius: 14px;
+  padding: 30px;
+  margin-top: 30px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+.form-label { color: #9fb3c8; }
+
+.form-control, .form-select {
+  background: #1b2a35;
+  border: 1px solid #2a3a45;
+  color: #e6edf3;
+}
+
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  color: #9fb3c8;
+}
+
+.btn-main {
+  background: #3fa7ff;
+  border: none;
+}
+
+.btn-main:hover { background: #2d8fe0; }
+
+.result-box {
+  margin-top: 25px;
+  padding: 20px;
+  border-radius: 10px;
+  background: #0f1820;
+  border: 1px solid #1f2a33;
+}
+
+.safe { color: #22c55e; }
+.risk { color: #ef4444; }
+
+canvas { margin-top: 25px; }
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+  <h2>⚡ Smart Load Balancing</h2>
+  <p>Optimize electricity usage and reduce overload risk</p>
+</div>
+
+<div class="container">
+<div class="card-custom">
+
+<form id="loadBalanceForm">
+
+<div class="row g-3">
+
+<div class="col-md-6">
+  <div class="slider-label">
+    <label>Total Demand (MW)</label>
+    <span id="demandVal">50</span>
+  </div>
+  <input type="range" min="10" max="200" value="50"
+  name="total_demand_mw" class="form-range"
+  oninput="demandVal.innerText=this.value">
+</div>
+
+<div class="col-md-6">
+  <div class="slider-label">
+    <label>Available Capacity (MW)</label>
+    <span id="capacityVal">80</span>
+  </div>
+  <input type="range" min="20" max="250" value="80"
+  name="available_capacity_mw" class="form-range"
+  oninput="capacityVal.innerText=this.value">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Peak Hour Factor</label>
+  <input type="number" step="0.01"
+  name="peak_hour_factor" class="form-control" value="1.2">
+</div>
+
+<div class="col-md-6">
+  <div class="slider-label">
+    <label>Renewable Share (%)</label>
+    <span id="renewVal">30</span>
+  </div>
+  <input type="range" min="0" max="100" value="30"
+  name="renewable_share_percent"
+  class="form-range"
+  oninput="renewVal.innerText=this.value">
+</div>
+
+<div class="col-md-6">
+  <div class="slider-label">
+    <label>Temperature (°C)</label>
+    <span id="tempVal">30</span>
+  </div>
+  <input type="range" min="10" max="45" value="30"
+  name="temperature_c"
+  class="form-range"
+  oninput="tempVal.innerText=this.value">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Time of Day</label>
+  <select name="time_of_day" class="form-select">
+    <option value="morning">Morning</option>
+    <option value="day">Day</option>
+    <option value="evening">Evening Peak</option>
+    <option value="night">Night</option>
+  </select>
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Weather</label>
+  <select name="weather_condition" class="form-select">
+    <option value="clear">Clear</option>
+    <option value="cloudy">Cloudy</option>
+    <option value="rainy">Rainy</option>
+    <option value="hot">Very Hot</option>
+    <option value="humid">Humid</option>
+  </select>
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Unexpected Event?</label>
+  <select name="unexpected_event_flag" class="form-select">
+    <option value="0">No</option>
+    <option value="1">Yes</option>
+  </select>
+</div>
+
+</div>
+
+<button class="btn btn-main w-100 mt-4">Optimize Load</button>
+
+</form>
+
+<div id="result" class="result-box text-center"></div>
+<canvas id="chart"></canvas>
+
+</div>
+</div>
+
+<script>
+const form = document.getElementById('loadBalanceForm');
+const resultDiv = document.getElementById('result');
+let chart;
+
+form.addEventListener('submit', async (e) => {
+e.preventDefault();
+
+resultDiv.innerHTML = "Analyzing...";
+
+const data = Object.fromEntries(new FormData(form).entries());
+
+// convert numeric fields
+for (let k in data) {
+  if (data[k] !== "" && !isNaN(data[k])) {
+    data[k] = Number(data[k]);
+  }
+}
+
+console.log("Sending data:", data); // DEBUG
+
+try {
+  const res = await fetch('/load-balancing', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+
+  if (!res.ok) throw new Error("Server error");
+
+  const json = await res.json();
+
+  resultDiv.innerHTML = `
+  <h5>Optimization Result</h5>
+  <p><b>Load Shift:</b> ${json.Suggested_Action}</p>
+  <p><b>New Load:</b> ${json.Adjusted_Load_MW} MW</p>
+  <p><b>Savings:</b> ₹${json.Saving_Estimate_Rs}</p>
+  <p>${json.Recommendation}</p>
+  <p class="${json.Overload_Risk === 'High' ? 'risk' : 'safe'}">
+  ${json.Overload_Risk === 'High' ? '⚠ High Risk' : '✔ Safe'}
+  </p>
+  `;
+
+  // // ✅ FIXED CHART
+  // const ctx = document.getElementById('chart').getContext('2d');
+
+  // if(chart) chart.destroy();
+
+  // chart = new Chart(ctx, {
+  //   type:'bar',
+  //   data:{
+  //     labels:['Before','After'],
+  //     datasets:[{
+  //       label:'Load',
+  //       data:[
+  //         data.total_demand_mw,
+  //         json.Adjusted_Load_MW || 0   // ✅ FIXED
+  //       ]
+  //     }]
+  //   },
+  //   options:{
+  //     responsive:true,
+  //     scales:{ y:{beginAtZero:true} }
+  //   }
+  // });
+
+} catch (err) {
+  console.error(err);
+  resultDiv.innerHTML = "⚠ Failed to connect to backend";
+}
+
+});
+</script>
+
+</body>
+</html>

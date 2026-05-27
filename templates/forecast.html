@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Demand Forecast – Mumbai Smart Grid</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {margin:0; font-family:'Segoe UI',sans-serif; background:#0f2027; color:#ddd;}
+        .header{background:#007bff;padding:20px;text-align:center;color:#fff;}
+        .container{max-width:1000px;margin:20px auto;padding:20px;}
+        .cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:30px;}
+        .card{background:rgba(255,255,255,0.1);padding:20px;border-radius:12px;flex:1;min-width:200px;text-align:center;}
+        .card h3{margin:0 0 10px;font-size:1.4rem;}
+        .card .big{font-size:2.5rem;font-weight:bold;color:#f1c40f;}
+        canvas{height:400px !important;}
+        .footer{text-align:center;margin-top:40px;font-size:0.9rem;opacity:0.7;}
+        .forecast-list{margin:20px 0; padding:15px; background:rgba(255,255,255,0.1); border-radius:10px;}
+        .forecast-item{margin:10px 0; font-size:1.1rem;}
+        .forecast-item span{color:#2ed573; font-weight:bold;}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Load Demand Forecast</h1>
+        <p>Next 24 hours prediction using AI models</p>
+    </div>
+
+    <div class="container">
+        <!-- Summary Cards -->
+        <div class="cards">
+            <div class="card">
+                <h3>Peak Load</h3>
+                <div class="big">{{ "%.1f"|format(predictions|max * 100) }}<small> kWh</small></div>
+            </div>
+            <div class="card">
+                <h3>Avg Load</h3>
+                <div class="big">{{ "%.1f"|format(predictions|sum / predictions|length * 100) }}<small> kWh</small></div>
+            </div>
+            <div class="card">
+                <h3>Risk of Overload</h3>
+                <div class="big">
+                    {% if (predictions|max) > 0.7 %}High{% elif (predictions|max) > 0.4 %}Medium{% else %}Low{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Forecast Chart -->
+        <canvas id="forecastChart"></canvas>
+
+        <!-- Detailed List -->
+        <div class="forecast-list">
+            <h3>Hourly Forecast (Next 6 Hours)</h3>
+            {% for i in range(6) %}
+            <div class="forecast-item">
+                Hour {{ i }}: 
+                <span>{{ "%.1f"|format(predictions[i % predictions|length] * 100) }} kWh</span>
+                {% if predictions[i % predictions|length] > 0.7 %} 
+                <span style="color:#ff4757;">(High Load)</span>
+                {% elif predictions[i % predictions|length] > 0.4 %}
+                <span style="color:#ffa502;">(Moderate)</span>
+                {% else %}
+                <span style="color:#2ed573;">(Low)</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="footer">
+        Model: Blackout Risk + Load Balancer AI • Data: <code>syn_load_bal.csv</code>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('forecastChart').getContext('2d');
+        const hours = Array.from({length: 24}, (_, i) => `H${i}`);
+        const data = {{ predictions|tojson }};
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: hours,
+                datasets: [{
+                    label: 'Predicted Load (kWh ×100)',
+                    data: data.map(x => x * 100),
+                    borderColor: '#f1c40f',
+                    backgroundColor: 'rgba(241, 196, 15, 0.2)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {callbacks: {label: ctx => `${ctx.raw.toFixed(1)} kWh`}}
+                },
+                scales: {
+                    y: {beginAtZero: true, title: {display: true, text: 'Load (kWh)'}}
+                }
+            }
+        });
+    </script>
+</body>
+</html>

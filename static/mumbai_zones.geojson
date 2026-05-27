@@ -1,0 +1,153 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "BEST Central",
+        "risk_factor": 0.3,
+        "risk_level": "Low",
+        "reason": "Stable infrastructure and balanced demand",
+        "advice": "Normal usage is safe"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.8627,
+              19.061
+            ],
+            [
+              72.8927,
+              19.061
+            ],
+            [
+              72.8927,
+              19.091
+            ],
+            [
+              72.8627,
+              19.091
+            ],
+            [
+              72.8627,
+              19.061
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Adani West",
+        "risk_factor": 0.6,
+        "risk_level": "Medium",
+        "reason": "Moderate evening load spikes",
+        "advice": "Avoid peak-hour usage"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.8219,
+              19.0982
+            ],
+            [
+              72.8519,
+              19.0982
+            ],
+            [
+              72.8519,
+              19.1282
+            ],
+            [
+              72.8219,
+              19.1282
+            ],
+            [
+              72.8219,
+              19.0982
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tata South",
+        "risk_factor": 0.4,
+        "risk_level": "Low-Medium",
+        "reason": "Residential area with occasional spikes",
+        "advice": "Monitor heavy appliance usage"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.82,
+              19.0468
+            ],
+            [
+              72.85,
+              19.0468
+            ],
+            [
+              72.85,
+              19.076800000000002
+            ],
+            [
+              72.82,
+              19.076800000000002
+            ],
+            [
+              72.82,
+              19.0468
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "MSEDCL Suburbs",
+        "risk_factor": 0.7,
+        "risk_level": "High",
+        "reason": "Frequent overload and unstable grid behavior",
+        "advice": "Shift usage to off-peak hours"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.9631,
+              19.2033
+            ],
+            [
+              72.9931,
+              19.2033
+            ],
+            [
+              72.9931,
+              19.2333
+            ],
+            [
+              72.9631,
+              19.2333
+            ],
+            [
+              72.9631,
+              19.2033
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

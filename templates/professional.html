@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professional Mode - Mumbai Smart Energy</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .pro-card { background: #1a2a3a; border-left: 5px solid #00ffcc; }
+  </style>
+</head>
+<body class="bg-dark text-light">
+
+<div class="container py-5">
+  <h1 class="text-center mb-4 text-info">🔧 Professional & Utility Staff Dashboard</h1>
+  <p class="text-center text-muted mb-5">Full access to original technical models with all parameters</p>
+
+  <div class="row g-4">
+    <!-- Fraud Detection Pro -->
+    <div class="col-lg-6">
+      <div class="pro-card card p-4">
+        <h3>Advanced Fraud Detection</h3>
+        <p class="text-muted">Uses full Random Forest model with technical parameters</p>
+        <a href="/fraud-detection-pro" class="btn btn-success w-100">Open Full Fraud Model →</a>
+        <small class="text-info mt-2 d-block">
+          • Voltage, Current, Active Power, Deviation Ratio, Load Spike<br>
+          • Returns fraud probability + confidence
+        </small>
+      </div>
+    </div>
+
+    <!-- Load Balancing Pro -->
+    <div class="col-lg-6">
+      <div class="pro-card card p-4">
+        <h3>Advanced Load Balancer (RL)</h3>
+        <p class="text-muted">Uses PPO Reinforcement Learning model</p>
+        <a href="/load-balancing-pro" class="btn btn-warning w-100">Open Full Load Balancer →</a>
+        <small class="text-info mt-2 d-block">
+          • All 8 parameters (Transformer %, Frequency, Season, etc.)<br>
+          • Returns Suggested Action, Reward, Overload Risk
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <a href="/home" class="btn btn-outline-light">← Back to Normal User Mode</a>
+  </div>
+</div>
+
+</body>
+</html>

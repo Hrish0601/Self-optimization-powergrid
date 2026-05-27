@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mumbai Smart Grid{% endblock %}</title>
+    <style>
+        :root {
+            --bg: #0f2027;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text: #ddd;
+            --primary: #007bff;
+            --success: #2ed573;
+            --danger: #ff4757;
+            --warning: #ffa502;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .header h1 { margin: 0 0 8px; font-size: 2rem; }
+        .header p { margin: 0; opacity: 0.9; }
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: linear-gradient(135deg, var(--primary), #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn:hover { background: linear-gradient(135deg, #0056b3, #004085); }
+        .btn.success { background: linear-gradient(135deg, var(--success), #218838); }
+        .btn.danger { background: linear-gradient(135deg, var(--danger), #c82333); }
+        .btn.warning { background: linear-gradient(135deg, var(--warning), #e0a800); }
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            transition: 0.3s;
+        }
+        .nav a:hover { background: rgba(255,255,255,0.2); }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="header">
+        <h1>Mumbai Power System Dashboard</h1>
+        <p>AI-Powered Smart Grid Management</p>
+    </div>
+
+    <div class="nav">
+        <a href="/home">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/alerts">Alerts</a>
+        <a href="/renewables">Renewables</a>
+        <a href="/forecast">Forecast</a>
+        <a href="/fraud-detection">Fraud Detection</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <div class="footer">
+        © 2025 Mumbai Smart Grid • AI-Powered • Real-Time Monitoring
+    </div>
+</body>
+</html>

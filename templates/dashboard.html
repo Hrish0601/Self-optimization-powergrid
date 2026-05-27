@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mumbai Smart Grid Map</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+  <style>
+    #map { height: 90vh; }
+    body { margin: 0; font-family: Arial; background:#0f2027; color:white; }
+    .popup {
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2 style="text-align:center;">⚡ Mumbai Grid Risk Dashboard</h2>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+const map = L.map('map').setView([19.076, 72.8777], 11);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+}).addTo(map);
+
+// Load GeoJSON
+fetch('/static/mumbai_zones.geojson')
+  .then(res => res.json())
+  .then(data => {
+
+    L.geoJSON(data, {
+      style: function(feature) {
+        let risk = feature.properties.risk_factor;
+
+        return {
+          color: risk > 0.6 ? "red" : risk > 0.4 ? "orange" : "green",
+          fillOpacity: 0.4
+        };
+      },
+
+      onEachFeature: function(feature, layer) {
+        const p = feature.properties;
+
+        layer.bindPopup(`
+          <div class="popup">
+            <h3>${p.name}</h3>
+            <b>Risk Level:</b> ${p.risk_level}<br>
+            <b>Reason:</b> ${p.reason}<br>
+            <b>Advice:</b> ${p.advice}
+          </div>
+        `);
+      }
+    }).addTo(map);
+  });
+</script>
+
+</body>
+</html>

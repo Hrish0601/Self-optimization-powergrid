@@ -1,0 +1,34 @@
+{
+  "BEST Central": {
+    "lat": 19.076,
+    "lng": 72.8777,
+    "risk_factor": 0.3,
+    "risk_level": "Low",
+    "reason": "Stable infrastructure and balanced demand",
+    "advice": "Normal usage is safe"
+  },
+  "Adani West": {
+    "lat": 19.1132,
+    "lng": 72.8369,
+    "risk_factor": 0.6,
+    "risk_level": "Medium",
+    "reason": "Moderate evening load spikes",
+    "advice": "Avoid peak-hour usage"
+  },
+  "Tata South": {
+    "lat": 19.0618,
+    "lng": 72.835,
+    "risk_factor": 0.4,
+    "risk_level": "Low-Medium",
+    "reason": "Residential area with occasional spikes",
+    "advice": "Monitor heavy appliance usage"
+  },
+  "MSEDCL Suburbs": {
+    "lat": 19.2183,
+    "lng": 72.9781,
+    "risk_factor": 0.7,
+    "risk_level": "High",
+    "reason": "Frequent overload and unstable grid behavior",
+    "advice": "Shift usage to off-peak hours"
+  }
+}
