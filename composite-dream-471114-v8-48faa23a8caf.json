@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "composite-dream-471114-v8",
+  "private_key_id": "48faa23a8caf37598f04dd5368e1be716d785198",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCRA4KD0jvNeFI0\ncNlQ/j++CftYi/YhARqyomf1QEjK3Ua6I9JTg0rTjDoEzscEZOxFkAsTHBTWEu0N\nUwqOJAtvONqn6d8tW79iPS0svQ7INS33zixDHgjdOWRe/p0tjh7EwAqkdcK5F7vh\nMA+ES8/rb4yo0W2Nq9Id82TCrt8lrs/uIzvUIEy+AZrV6EAlYtmIomJt68l0GW/f\niugVppcvsm72Q+WgJEctkBl0D8DznLqEa7ZYyszzn2NNCpK8Nljo6otXighn8Az4\nhJoa8PkMveakRZlQySWo2jsp2/1CPxJpOJb6/YWQjynaFfh0L2T6dT+77ZLnzFBu\n72mB1IRXAgMBAAECggEALt7aC/5jGu3VcCK7cuzCsItsZHnUg2Vmei9493GgNYWg\nyyAx5pFMmaS8yfoFpHt0TKWalsIgT/MNEJ3zDu9CjN/s+JHkczYw3TFVzRyMTxS1\nN1+5ubXW+p4GvZeBOQyzEDfcGL0BQ68SqF3O3h1c5kWHSrdqN/y9rLWTL0OzV2u1\nNnxiNLMzBmAQc/QSUCMuuXLoU/eXs261vIFsxQa3TiVYv54JA/8T5JLhV8wY8wkU\nc5UTHZdBxxC3J88eUYV03GivmQOh97UwoQeVJL3JZqfL956krm0qCvvEzmSIYPm6\nECGpy+UNv/QitkbUPJ8B7ZLUhCD/HosviI6vQA7NJQKBgQDBqyZGGxiFVpYTI8Sf\nKuUSAFd2BAuAAc/xiQd7b0pcthi4jVXefoF+lrvcVgJS7x2lhbaCa8YFnQWA0Ki4\nmcStGP6/UmKEPRKdsaHSd977vUI66ia0VgGqJc6dm+TiNvJtu17U6hBUVZJ/mooD\nY9NNRTuZGkLW1r8GS0E4ojkvZQKBgQC/r5AICYnrGPK52zYWDDVp1p92wdjYpYfM\nSVaaKgshjOlBEpyyfZY9fWj5sMbMpquyEteEXuIc90DINjkP6cEAXqGruCe6Xdbp\nFuqJXmz/Sw6zbS1mPqWdBecgQCxVLM+hhT2jnbrXs4prVqdRje/JzE+zINwt4wn3\nFdJjn5VfCwKBgGnAVRPu88LLdwNYgqMPPypHOXrd1pG9a5jOZGGIcaiSXolX0828\ncmV3VXmJFZfHrf6WNwScaPLjvP+L8LVscbK7dU9vYxAmcSXeuyg8AGyh+apF9YB/\nfkU0g9AYMjE8I8C7kZrdfLEwUOCQuFAFkHofFd4SMvExLfn32dNc8bDpAoGAF3vN\nvH5WrDvBOO3XQXo7bP0DSkxTYa9d5LQzbO2rsW+PAA7kraVfK6dangR/RoFA1a8j\nQi9RqlTMVfr2oLF1mLL/QYdtLpLiimnpT+0Gk3xBj8/XWQhhx8v6VeQmykSUJ2io\ndYwUYOq5EY9rLj2iW+mw9fQXpXOEPAYrYVMivKMCgYBFMpYNyXGHwPUcCvQlX+4Z\ntO21Et2A2ktmCzYhZGyjsGmUSjw9B9utNm9FvgLkTwFirOrWkQZBL5MtroGlf8Cj\n6FvzZNi0DcD/e6+P12q/qvtPfnxVojUBNHUVw9UEH+7/RCMcrghNufsX3xQIbMmi\nTekjUQ4mD1X9HwE5M1tC+Q==\n-----END PRIVATE KEY-----\n",
+  "client_email": "fraudulent-seracc@composite-dream-471114-v8.iam.gserviceaccount.com",
+  "client_id": "108194793305821858463",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fraudulent-seracc%40composite-dream-471114-v8.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
